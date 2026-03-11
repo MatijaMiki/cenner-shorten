@@ -543,6 +543,23 @@ body {
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 1);
   text-align: center;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-link {
+  color: rgba(200, 140, 255, 1);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+.footer-sep {
+  opacity: 0.6;
 }
 
 /* Edit modal */
@@ -706,4 +723,3 @@ body {
     width: min(50vw, 480px);
   }
 }
-

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Shorten — Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="dash-header">
+      <div>
+        <p class="eyebrow">Shorten</p>
+        <h1>Analytics</h1>
+        <p class="subtitle" id="rangeLabel">Last 30 days</p>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn" id="refreshBtn">Refresh</button>
+        <a class="btn btn-ghost" href="/">Open app</a>
+      </div>
+    </header>
+
+    <section class="kpi-grid">
+      <div class="kpi">
+        <p class="kpi-label">Total Clicks</p>
+        <p class="kpi-value" id="kpiClicks">—</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi-label">Unique Users</p>
+        <p class="kpi-value" id="kpiUsers">—</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi-label">Organic Users</p>
+        <p class="kpi-value" id="kpiOrganic">—</p>
+      </div>
+      <div class="kpi">
+        <p class="kpi-label">Last 24h Clicks</p>
+        <p class="kpi-value" id="kpiLast24">—</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Traffic Sources</h2>
+        <p class="panel-sub">Direct, organic, referral, campaign</p>
+      </div>
+      <div class="bar-list" id="sources"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Clicks Over Time</h2>
+        <p class="panel-sub" id="sparkSub">No data yet</p>
+      </div>
+      <div class="sparkline" id="sparkline"></div>
+    </section>
+
+    <section class="grid-2">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Top Links</h2>
+          <p class="panel-sub">By clicks</p>
+        </div>
+        <div class="list" id="topLinks"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Countries</h2>
+          <p class="panel-sub">Where visitors are from</p>
+        </div>
+        <div class="bar-list" id="countries"></div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Referrers</h2>
+          <p class="panel-sub">Top sources sending traffic</p>
+        </div>
+        <div class="bar-list" id="referrers"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Devices</h2>
+          <p class="panel-sub">What visitors use</p>
+        </div>
+        <div class="bar-list" id="devices"></div>
+      </div>
+    </section>
+
+    <section class="grid-2">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Browsers</h2>
+          <p class="panel-sub">Most common browsers</p>
+        </div>
+        <div class="bar-list" id="browsers"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Operating Systems</h2>
+          <p class="panel-sub">OS usage</p>
+        </div>
+        <div class="bar-list" id="os"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>App Usage</h2>
+        <p class="panel-sub">What is used most in the app</p>
+      </div>
+      <div class="bar-list" id="appUsage"></div>
+    </section>
+
+    <footer class="dash-footer">
+      <span>(c) cenner.hr 2026</span>
+      <span class="footer-sep">•</span>
+      <a class="footer-link" href="/terms.html">Terms &amp; Conditions</a>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
