@@ -52,11 +52,9 @@ body {
   margin: 0 auto;
   padding: clamp(1.25rem, 5vw, 2.25rem) clamp(0.9rem, 4vw, 1.5rem) 0;
   text-align: center;
-  flex: 1;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  min-height: 0;
 }
 
 .header {
@@ -230,11 +228,13 @@ body {
 }
 
 .list-section {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.5rem clamp(0.9rem, 4vw, 1.5rem) 1rem;
   border-top: 1px solid var(--border);
   border-top-color: rgba(53, 0, 82, 1);
   border-image: none;
-  padding-top: 1.5rem;
-  padding-bottom: 1rem;
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -267,6 +267,8 @@ body {
   width: 2rem;
   height: 2rem;
   padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
   background: none;
   border: none;
   color: var(--text-muted);
@@ -467,6 +469,8 @@ body {
   width: 2.5rem;
   height: 2.5rem;
   padding: 0;
+  appearance: none;
+  -webkit-appearance: none;
   background: none;
   border: none;
   color: var(--text-muted);
@@ -667,6 +671,9 @@ body {
     padding-top: 3rem;
     max-width: 680px;
   }
+  .list-section {
+    max-width: 680px;
+  }
   .header {
     margin-bottom: 2.75rem;
   }
@@ -688,10 +695,18 @@ body {
     max-width: 720px;
     padding-top: 3.5rem;
   }
+  .list-section {
+    max-width: 720px;
+  }
 }
 
 /* Mobile drawer (< 640px) ───────────────────────────────── */
 @media (max-width: 639px) {
+  /* Wrap fills the space; list section is off-canvas */
+  .wrap {
+    flex: 1;
+  }
+
   /* Show the toggle & close button */
   .drawer-toggle {
     display: flex;
@@ -709,6 +724,8 @@ body {
     width: min(85vw, 340px);
     height: 100%;
     height: 100dvh;
+    max-width: none;
+    margin: 0;
     background: var(--surface);
     border-top: none;
     border-left: 1px solid rgba(106, 0, 163, 0.5);
