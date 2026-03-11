@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Shorten</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <h1 class="title">Shorten</h1>
+      <p class="tagline">Personal link shortener</p>
+    </header>
+
+    <form class="form" id="form">
+      <div class="field">
+        <label for="url">URL</label>
+        <input type="url" id="url" name="url" placeholder="https://example.com/page" required autocomplete="off" />
+      </div>
+      <div class="row">
+        <div class="field optional">
+          <label for="code">Short code <span>(optional)</span></label>
+          <input
+            type="text"
+            id="code"
+            name="code"
+            placeholder="my-link"
+            autocomplete="off"
+            pattern="[a-zA-Z0-9_-]+"
+            maxlength="32"
+            title="Use only letters (A–Z), numbers (0–9), underscore (_) and hyphen (-)."
+          />
+          <div class="help" id="codeHelp">Format: letters, numbers, <code>_</code> and <code>-</code> (max 32).</div>
+        </div>
+        <div class="field optional">
+          <label for="notes">Notes</label>
+          <input type="text" id="notes" name="notes" placeholder="Optional note" autocomplete="off" />
+        </div>
+      </div>
+      <button type="submit" class="btn" id="submit">Create short link</button>
+    </form>
+
+    <div class="message" id="message" role="status" aria-live="polite"></div>
+
+    <section class="list-section">
+      <h2 class="list-title">Your links</h2>
+      <ul class="list" id="list"></ul>
+      <p class="empty" id="empty">No links yet. Create one above.</p>
+    </section>
+  </div>
+  <footer class="footer">© cenner.hr 2026</footer>
+  <div class="modal-overlay" id="editModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="editModalTitle">
+      <h3 class="modal-title" id="editModalTitle">Edit link</h3>
+      <form id="editForm">
+        <input type="hidden" id="editCode" name="code" />
+        <div class="field">
+          <label for="editUrl">URL</label>
+          <input type="url" id="editUrl" name="url" required />
+        </div>
+        <div class="field">
+          <label for="editNotes">Notes</label>
+          <input type="text" id="editNotes" name="notes" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="editCancel">Cancel</button>
+          <button type="submit" class="btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

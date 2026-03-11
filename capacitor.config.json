@@ -1,0 +1,9 @@
+{
+  "appId": "com.shortener.app",
+  "appName": "Shorten",
+  "webDir": "public",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": false
+  }
+}

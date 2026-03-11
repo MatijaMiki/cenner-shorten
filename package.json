@@ -1,0 +1,30 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "description": "Personal URL shortener, extensible for public use",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "cap:sync": "npx cap sync",
+    "ios": "npx cap open ios",
+    "mac": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2",
+    "@capacitor/preferences": "^6.0.2",
+    "better-sqlite3": "^11.6.0",
+    "express": "^4.21.1",
+    "nanoid": "^5.0.9"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  },
+  "capacitor": {
+    "ios": {
+      "path": "ios"
+    }
+  }
+}
