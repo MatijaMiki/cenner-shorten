@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xargs ls -la)"
+      "Bash(xargs ls -la)",
+      "Bash(git checkout -b feat/persistent-volume-db-path)",
+      "Bash(git add db.js)",
+      "Bash(git commit:*)",
+      "Bash(git push -u origin feat/persistent-volume-db-path)",
+      "Bash(gh pr:*)"
     ]
   }
 }
