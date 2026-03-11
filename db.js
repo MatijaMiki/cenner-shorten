@@ -1,10 +1,14 @@
 import Database from 'better-sqlite3';
 import { customAlphabet } from 'nanoid';
+import { mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const dbPath = process.env.DB_PATH || join(__dirname, 'links.db');
+
+// Ensure the directory exists (important when DB_PATH=/data/links.db and /data is a fresh volume)
+mkdirSync(dirname(dbPath), { recursive: true });
 
 const db = new Database(dbPath);
 
