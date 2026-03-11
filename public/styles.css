@@ -52,7 +52,7 @@ body {
   margin: 0 auto;
   padding: clamp(1.25rem, 5vw, 2.25rem) clamp(0.9rem, 4vw, 1.5rem) 0;
   text-align: center;
-  flex-shrink: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -227,20 +227,30 @@ body {
   display: none;
 }
 
+/* ── Drawer panel (always fixed overlay, hidden off-canvas by default) ── */
 .list-section {
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 1.5rem clamp(0.9rem, 4vw, 1.5rem) 1rem;
-  border-top: 1px solid var(--border);
-  border-top-color: rgba(53, 0, 82, 1);
-  border-image: none;
-  flex: 1;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(88vw, 400px);
+  height: 100%;
+  height: 100dvh;
+  background: var(--surface);
+  border-left: 1px solid rgba(106, 0, 163, 0.5);
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.55);
+  z-index: 60;
+  padding: calc(1.25rem + env(safe-area-inset-top)) 1.1rem calc(1.5rem + env(safe-area-inset-bottom));
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  min-height: 0;
+  transform: translateX(110%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   scrollbar-width: thin;
   scrollbar-color: rgba(53, 0, 82, 0.8) transparent;
+}
+
+.list-section.drawer-open {
+  transform: translateX(0);
 }
 
 .list-title {
@@ -260,7 +270,7 @@ body {
 }
 
 .list-close-btn {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
@@ -463,7 +473,7 @@ body {
   top: 50%;
   right: 0;
   transform: translateY(-50%);
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 2.5rem;
@@ -671,9 +681,6 @@ body {
     padding-top: 3rem;
     max-width: 680px;
   }
-  .list-section {
-    max-width: 680px;
-  }
   .header {
     margin-bottom: 2.75rem;
   }
@@ -696,53 +703,7 @@ body {
     padding-top: 3.5rem;
   }
   .list-section {
-    max-width: 720px;
+    width: min(50vw, 480px);
   }
 }
 
-/* Mobile drawer (< 640px) ───────────────────────────────── */
-@media (max-width: 639px) {
-  /* Wrap fills the space; list section is off-canvas */
-  .wrap {
-    flex: 1;
-  }
-
-  /* Show the toggle & close button */
-  .drawer-toggle {
-    display: flex;
-  }
-  .list-close-btn {
-    display: flex;
-  }
-
-  /* Convert list-section into a fixed right-side panel */
-  #listSection {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: min(85vw, 340px);
-    height: 100%;
-    height: 100dvh;
-    max-width: none;
-    margin: 0;
-    background: var(--surface);
-    border-top: none;
-    border-left: 1px solid rgba(106, 0, 163, 0.5);
-    box-shadow: -6px 0 32px rgba(0, 0, 0, 0.5);
-    z-index: 60;
-    padding: calc(1.25rem + env(safe-area-inset-top)) 1rem calc(1.5rem + env(safe-area-inset-bottom));
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    transform: translateX(110%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex: none;
-    min-height: unset;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(53, 0, 82, 0.8) transparent;
-  }
-
-  #listSection.drawer-open {
-    transform: translateX(0);
-  }
-}
