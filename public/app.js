@@ -5,6 +5,10 @@ const listEl = document.getElementById('list');
 const emptyEl = document.getElementById('empty');
 const messageEl = document.getElementById('message');
 const codeInput = document.getElementById('code');
+const deleteModal = document.getElementById('deleteModal');
+const deleteModalCode = document.getElementById('deleteModalCode');
+const deleteCancel = document.getElementById('deleteCancel');
+const deleteConfirm = document.getElementById('deleteConfirm');
 const editModal = document.getElementById('editModal');
 const editForm = document.getElementById('editForm');
 const editCode = document.getElementById('editCode');
@@ -19,6 +23,30 @@ const icons = {
   delete: '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h12v10a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/><path d="M2 6h16M8 6V4a2 2 0 012-2h0a2 2 0 012 2v2"/></svg>',
   chevron: '<svg class="icon icon-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg>',
 };
+
+// Promise-based delete confirmation modal
+let _deleteResolve = null;
+
+function showDeleteConfirm(code) {
+  return new Promise((resolve) => {
+    deleteModalCode.textContent = `/${code}`;
+    deleteModal.classList.add('modal-visible');
+    deleteModal.setAttribute('aria-hidden', 'false');
+    _deleteResolve = resolve;
+    deleteConfirm.focus();
+  });
+}
+
+function closeDeleteModal(result) {
+  deleteModal.classList.remove('modal-visible');
+  deleteModal.setAttribute('aria-hidden', 'true');
+  if (_deleteResolve) { _deleteResolve(result); _deleteResolve = null; }
+}
+
+deleteCancel.addEventListener('click', () => closeDeleteModal(false));
+deleteConfirm.addEventListener('click', () => closeDeleteModal(true));
+deleteModal.addEventListener('click', (e) => { if (e.target === deleteModal) closeDeleteModal(false); });
+deleteModal.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDeleteModal(false); });
 
 function showMessage(text, type = 'success') {
   messageEl.textContent = text;
@@ -43,16 +71,18 @@ function renderList(links) {
       (l) => `
     <li data-code="${escapeAttr(l.short_code)}" class="list-item">
       <div class="list-item-main" role="button" tabindex="0" aria-expanded="false" aria-controls="detail-${escapeAttr(l.short_code)}" id="row-${escapeAttr(l.short_code)}">
-        <span class="code">/${escapeHtml(l.short_code)}</span>
-        <span class="long" title="${escapeAttr(l.long_url)}">${escapeHtml(l.long_url)}</span>
+        <div class="list-item-text">
+          <span class="code">/${escapeHtml(l.short_code)}</span>
+          <span class="long" title="${escapeAttr(l.long_url)}">${escapeHtml(l.long_url)}</span>
+        </div>
+        <span class="actions">
+          <a href="${escapeAttr(l.short_url)}" target="_blank" rel="noopener" class="action-btn open" aria-label="Open">${icons.open}</a>
+          <a href="#" class="action-btn copy" data-url="${escapeAttr(l.short_url)}" aria-label="Copy short URL">${icons.copy}</a>
+          <button type="button" class="action-btn edit" data-code="${escapeAttr(l.short_code)}" data-url="${escapeAttr(l.long_url)}" data-notes="${escapeAttr(l.notes || '')}" aria-label="Edit">${icons.edit}</button>
+          <button type="button" class="action-btn delete" aria-label="Delete">${icons.delete}</button>
+        </span>
         ${icons.chevron}
       </div>
-      <span class="actions">
-        <a href="${escapeAttr(l.short_url)}" target="_blank" rel="noopener" class="action-btn open" aria-label="Open">${icons.open}</a>
-        <a href="#" class="action-btn copy" data-url="${escapeAttr(l.short_url)}" aria-label="Copy short URL">${icons.copy}</a>
-        <button type="button" class="action-btn edit" data-code="${escapeAttr(l.short_code)}" data-url="${escapeAttr(l.long_url)}" data-notes="${escapeAttr(l.notes || '')}" aria-label="Edit">${icons.edit}</button>
-        <button type="button" class="action-btn delete" aria-label="Delete">${icons.delete}</button>
-      </span>
       <div class="list-item-detail" id="detail-${escapeAttr(l.short_code)}" hidden>
         <div class="detail-row"><strong>Added:</strong> ${escapeHtml(formatDate(l.created_at))}</div>
         <div class="detail-row"><strong>Full URL:</strong> <a href="${escapeAttr(l.long_url)}" target="_blank" rel="noopener" class="detail-link">${escapeHtml(l.long_url)}</a></div>
@@ -101,22 +131,21 @@ function renderList(links) {
   });
 
   listEl.querySelectorAll('.action-btn.delete').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const li = btn.closest('li');
       const code = li?.dataset.code;
       if (!code) return;
-      if (!confirm(`Delete /${code}? This cannot be undone.`)) return;
-      (async () => {
-        try {
-          const r = await fetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), { method: 'DELETE' });
-          if (!r.ok) throw new Error('Delete failed');
-          li.remove();
-          if (listEl.children.length === 0) emptyEl.classList.remove('hidden');
-        } catch {
-          showMessage('Could not delete link.', 'error');
-        }
-      })();
+      const confirmed = await showDeleteConfirm(code);
+      if (!confirmed) return;
+      try {
+        const r = await fetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), { method: 'DELETE' });
+        if (!r.ok) throw new Error('Delete failed');
+        li.remove();
+        if (listEl.children.length === 0) emptyEl.classList.remove('hidden');
+      } catch {
+        showMessage('Could not delete link.', 'error');
+      }
     });
   });
 
