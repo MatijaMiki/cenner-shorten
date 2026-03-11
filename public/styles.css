@@ -478,6 +478,59 @@ body {
   margin-top: 1.25rem;
 }
 
+/* Delete confirmation modal */
+.modal-delete {
+  text-align: center;
+  max-width: 340px;
+}
+
+.delete-modal-icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem;
+  color: var(--danger);
+  opacity: 0.85;
+}
+
+.delete-modal-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.delete-modal-body {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.delete-modal-code {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+}
+
+/* Danger button */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: var(--danger-hover);
+}
+
 /* ── Responsive breakpoints ─────────────────────────────────── */
 
 /* iPhone SE / small Android (≤ 375px) */
