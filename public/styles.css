@@ -50,7 +50,7 @@ body {
   max-width: 640px;
   width: 100%;
   margin: 0 auto;
-  padding: 2.25rem 1.5rem 0;
+  padding: clamp(1.25rem, 5vw, 2.25rem) clamp(0.9rem, 4vw, 1.5rem) 0;
   text-align: center;
   flex: 1;
   display: flex;
@@ -60,11 +60,12 @@ body {
 }
 
 .header {
-  margin-bottom: 2.5rem;
+  flex-shrink: 0;
+  margin-bottom: clamp(1.25rem, 4vw, 2.5rem);
 }
 
 .title {
-  font-size: 1.75rem;
+  font-size: clamp(1.4rem, 5vw, 1.75rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   margin: 0 0 0.25rem 0;
@@ -77,10 +78,11 @@ body {
 }
 
 .form {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
+  gap: clamp(0.85rem, 3vw, 1.25rem);
+  margin-bottom: 1.25rem;
 }
 
 .field {
@@ -208,8 +210,9 @@ body {
 }
 
 .message {
-  min-height: 1.5rem;
-  margin-bottom: 1.5rem;
+  flex-shrink: 0;
+  min-height: 1.25rem;
+  margin-bottom: 1rem;
   font-size: 0.9rem;
 }
 
@@ -259,43 +262,57 @@ body {
 
 .list li {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
+  flex-direction: column;
   padding: 0;
   background: var(--surface);
   border: 1px solid var(--border);
+  border-left: 3px solid rgba(106, 0, 163, 0.55);
   border-radius: var(--radius);
   animation: slideIn 0.25s ease;
   overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: border-left-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.list li:hover {
+  border-left-color: rgba(200, 140, 255, 0.95);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(106, 0, 163, 0.22);
 }
 
 .list-item-main {
-  flex: 1;
-  min-width: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 0.9rem;
+  padding: 0.7rem 0.9rem;
   cursor: pointer;
   text-align: left;
   transition: background 0.15s ease;
+  min-width: 0;
 }
 
 .list-item-main:hover {
-  background: rgba(88, 166, 255, 0.06);
+  background: rgba(106, 0, 163, 0.08);
 }
 
 .list-item-main .icon-chevron {
   flex-shrink: 0;
   width: 1rem;
   height: 1rem;
-  opacity: 0.6;
+  opacity: 0.5;
   transition: transform 0.2s ease;
 }
 
 .list-item-main[aria-expanded="true"] .icon-chevron {
   transform: rotate(180deg);
+}
+
+.list-item-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .list-item-detail {
@@ -339,15 +356,15 @@ body {
 .list li .code {
   font-family: var(--font-mono);
   font-size: 0.9rem;
+  font-weight: 500;
   color: var(--accent);
-  flex-shrink: 0;
-  min-width: 5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .list li .long {
-  flex: 1;
-  min-width: 0;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -357,9 +374,8 @@ body {
 .list li .actions {
   display: flex;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.15rem;
   flex-shrink: 0;
-  padding-right: 0.5rem;
 }
 
 .list .icon {
@@ -460,4 +476,64 @@ body {
   gap: 0.75rem;
   justify-content: flex-end;
   margin-top: 1.25rem;
+}
+
+/* ── Responsive breakpoints ─────────────────────────────────── */
+
+/* iPhone SE / small Android (≤ 375px) */
+@media (max-width: 375px) {
+  .wrap {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .form {
+    gap: 0.75rem;
+  }
+  .row {
+    grid-template-columns: 1fr;
+  }
+  .list .action-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .list .icon {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+}
+
+/* iPhone 14/15 / standard Android (376px – 430px) */
+@media (min-width: 376px) and (max-width: 430px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* iPad / tablet (≥ 768px) */
+@media (min-width: 768px) {
+  .wrap {
+    padding-top: 3rem;
+    max-width: 680px;
+  }
+  .header {
+    margin-bottom: 2.75rem;
+  }
+  .list li .code {
+    font-size: 0.95rem;
+  }
+  .list li .long {
+    font-size: 0.8rem;
+  }
+  .list .action-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+/* Large screens / desktop (≥ 1024px) */
+@media (min-width: 1024px) {
+  .wrap {
+    max-width: 720px;
+    padding-top: 3.5rem;
+  }
 }

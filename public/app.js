@@ -43,16 +43,18 @@ function renderList(links) {
       (l) => `
     <li data-code="${escapeAttr(l.short_code)}" class="list-item">
       <div class="list-item-main" role="button" tabindex="0" aria-expanded="false" aria-controls="detail-${escapeAttr(l.short_code)}" id="row-${escapeAttr(l.short_code)}">
-        <span class="code">/${escapeHtml(l.short_code)}</span>
-        <span class="long" title="${escapeAttr(l.long_url)}">${escapeHtml(l.long_url)}</span>
+        <div class="list-item-text">
+          <span class="code">/${escapeHtml(l.short_code)}</span>
+          <span class="long" title="${escapeAttr(l.long_url)}">${escapeHtml(l.long_url)}</span>
+        </div>
+        <span class="actions">
+          <a href="${escapeAttr(l.short_url)}" target="_blank" rel="noopener" class="action-btn open" aria-label="Open">${icons.open}</a>
+          <a href="#" class="action-btn copy" data-url="${escapeAttr(l.short_url)}" aria-label="Copy short URL">${icons.copy}</a>
+          <button type="button" class="action-btn edit" data-code="${escapeAttr(l.short_code)}" data-url="${escapeAttr(l.long_url)}" data-notes="${escapeAttr(l.notes || '')}" aria-label="Edit">${icons.edit}</button>
+          <button type="button" class="action-btn delete" aria-label="Delete">${icons.delete}</button>
+        </span>
         ${icons.chevron}
       </div>
-      <span class="actions">
-        <a href="${escapeAttr(l.short_url)}" target="_blank" rel="noopener" class="action-btn open" aria-label="Open">${icons.open}</a>
-        <a href="#" class="action-btn copy" data-url="${escapeAttr(l.short_url)}" aria-label="Copy short URL">${icons.copy}</a>
-        <button type="button" class="action-btn edit" data-code="${escapeAttr(l.short_code)}" data-url="${escapeAttr(l.long_url)}" data-notes="${escapeAttr(l.notes || '')}" aria-label="Edit">${icons.edit}</button>
-        <button type="button" class="action-btn delete" aria-label="Delete">${icons.delete}</button>
-      </span>
       <div class="list-item-detail" id="detail-${escapeAttr(l.short_code)}" hidden>
         <div class="detail-row"><strong>Added:</strong> ${escapeHtml(formatDate(l.created_at))}</div>
         <div class="detail-row"><strong>Full URL:</strong> <a href="${escapeAttr(l.long_url)}" target="_blank" rel="noopener" class="detail-link">${escapeHtml(l.long_url)}</a></div>
