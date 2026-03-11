@@ -15,6 +15,11 @@ const editCode = document.getElementById('editCode');
 const editUrl = document.getElementById('editUrl');
 const editNotes = document.getElementById('editNotes');
 const editCancel = document.getElementById('editCancel');
+const listSection = document.getElementById('listSection');
+const drawerToggle = document.getElementById('drawerToggle');
+const drawerClose = document.getElementById('drawerClose');
+const drawerBackdrop = document.getElementById('drawerBackdrop');
+const drawerBadge = document.getElementById('drawerBadge');
 
 const icons = {
   open: '<svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 3h6v6M10 14L17 3M3 17V7a2 2 0 012-2h4"/></svg>',
@@ -97,6 +102,7 @@ function renderList(links) {
     .join('');
 
   emptyEl.classList.toggle('hidden', links.length > 0);
+  syncDrawerBadge();
 
   listEl.querySelectorAll('.list-item-main').forEach((row) => {
     row.addEventListener('click', (e) => {
@@ -143,6 +149,7 @@ function renderList(links) {
         if (!r.ok) throw new Error('Delete failed');
         li.remove();
         if (listEl.children.length === 0) emptyEl.classList.remove('hidden');
+        syncDrawerBadge();
       } catch {
         showMessage('Could not delete link.', 'error');
       }
@@ -266,6 +273,47 @@ editForm.addEventListener('submit', async (e) => {
     await loadList();
   } catch {
     showMessage('Could not update link.', 'error');
+  }
+});
+
+// ── Drawer ────────────────────────────────────────────────────
+function syncDrawerBadge() {
+  if (!drawerBadge) return;
+  const count = listEl.children.length;
+  if (count > 0) {
+    drawerBadge.textContent = count > 99 ? '99+' : String(count);
+    drawerBadge.hidden = false;
+  } else {
+    drawerBadge.hidden = true;
+  }
+}
+
+function openDrawer() {
+  listSection?.classList.add('drawer-open');
+  drawerBackdrop?.classList.add('drawer-open');
+  drawerToggle?.setAttribute('aria-expanded', 'true');
+  drawerClose?.focus();
+}
+
+function closeDrawer() {
+  listSection?.classList.remove('drawer-open');
+  drawerBackdrop?.classList.remove('drawer-open');
+  drawerToggle?.setAttribute('aria-expanded', 'false');
+  drawerToggle?.focus();
+}
+
+drawerToggle?.addEventListener('click', openDrawer);
+drawerClose?.addEventListener('click', closeDrawer);
+drawerBackdrop?.addEventListener('click', closeDrawer);
+
+document.addEventListener('keydown', (e) => {
+  if (
+    e.key === 'Escape' &&
+    listSection?.classList.contains('drawer-open') &&
+    !deleteModal.classList.contains('modal-visible') &&
+    !editModal.classList.contains('modal-visible')
+  ) {
+    closeDrawer();
   }
 });
 

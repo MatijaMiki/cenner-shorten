@@ -14,6 +14,10 @@
     <header class="header">
       <h1 class="title">Shorten</h1>
       <p class="tagline">Personal link shortener</p>
+      <button type="button" class="drawer-toggle" id="drawerToggle" aria-label="View saved links" aria-expanded="false" aria-controls="listSection">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h10"/></svg>
+        <span class="drawer-badge" id="drawerBadge" hidden>0</span>
+      </button>
     </header>
 
     <form class="form" id="form">
@@ -46,13 +50,19 @@
 
     <div class="message" id="message" role="status" aria-live="polite"></div>
 
-    <section class="list-section">
-      <h2 class="list-title">Your links</h2>
+    <section class="list-section" id="listSection" aria-label="Saved links">
+      <div class="list-section-head">
+        <h2 class="list-title">Your links</h2>
+        <button type="button" class="list-close-btn" id="drawerClose" aria-label="Close links panel">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg>
+        </button>
+      </div>
       <ul class="list" id="list"></ul>
       <p class="empty" id="empty">No links yet. Create one above.</p>
     </section>
   </div>
   <footer class="footer">© cenner.hr 2026</footer>
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
   <div class="modal-overlay" id="deleteModal" aria-hidden="true">
     <div class="modal modal-delete" role="dialog" aria-labelledby="deleteModalTitle" aria-modal="true">
       <div class="delete-modal-icon" aria-hidden="true">
