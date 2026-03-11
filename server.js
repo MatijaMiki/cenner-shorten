@@ -2,7 +2,7 @@ import express from 'express';
 import crypto from 'crypto';
 import UAParser from 'ua-parser-js';
 import geoip from 'geoip-lite';
-import isbot from 'isbot';
+import { isbot } from 'isbot';
 import { createLink, getByShortCode, listLinks, deleteLink, updateLink, logClick, logEvent, getAnalyticsSummary } from './db.js';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
