@@ -21,7 +21,7 @@
 html {
   height: 100vh;
   height: 100dvh;
-  overflow: hidden;
+  overflow: auto;
   overscroll-behavior: none;
   background: var(--page-grad);
   background-color: rgba(0, 0, 0, 1);
@@ -29,9 +29,9 @@ html {
 
 body {
   margin: 0;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: auto;
   overscroll-behavior: none;
   background: var(--page-grad);
   background-color: rgba(0, 0, 0, 1);
@@ -50,8 +50,7 @@ body {
   width: 100%;
   margin: 0 auto;
   padding: clamp(1.25rem, 5vw, 2.25rem) clamp(0.9rem, 4vw, 1.5rem) 2.5rem;
-  overflow-y: auto;
-  height: 100%;
+  height: auto;
 }
 
 .page::before {
