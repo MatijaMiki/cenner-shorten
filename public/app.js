@@ -1,4 +1,4 @@
-import { initApiBase, apiUrl, getApiBase } from './api.js';
+import { initApiBase, apiUrl, getApiBase, getAuthHeaders } from './api.js';
 
 const form = document.getElementById('form');
 const listEl = document.getElementById('list');
@@ -145,7 +145,10 @@ function renderList(links) {
       const confirmed = await showDeleteConfirm(code);
       if (!confirmed) return;
       try {
-        const r = await fetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), { method: 'DELETE' });
+        const r = await fetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), {
+          method: 'DELETE',
+          headers: getAuthHeaders(),
+        });
         if (!r.ok) throw new Error('Delete failed');
         li.remove();
         if (listEl.children.length === 0) emptyEl.classList.remove('hidden');
@@ -198,7 +201,7 @@ if (codeInput) {
 
 async function loadList() {
   try {
-    const r = await fetch(apiUrl('/api/links'));
+    const r = await fetch(apiUrl('/api/links'), { headers: getAuthHeaders() });
     if (!r.ok) throw new Error('Failed to load');
     const links = await r.json();
     renderList(links);
@@ -219,7 +222,7 @@ form.addEventListener('submit', async (e) => {
   try {
     const r = await fetch(apiUrl('/api/links'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ url, code, notes }),
     });
     const data = await r.json().catch(() => ({}));
@@ -264,7 +267,7 @@ editForm.addEventListener('submit', async (e) => {
   try {
     const r = await fetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ long_url: longUrl, notes }),
     });
     if (!r.ok) throw new Error('Update failed');
