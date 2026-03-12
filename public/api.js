@@ -3,6 +3,7 @@
  * Browser: same-origin or localStorage. Capacitor: Preferences.
  */
 const STORAGE_KEY = 'shorten_api_base';
+const TOKEN_KEY = 'shorten_app_token';
 let apiBase = '';
 const NATIVE_API_BASE = 'http://192.168.1.5:3333';
 
@@ -51,4 +52,13 @@ export function apiUrl(path) {
   const p = path.startsWith('/') ? path : '/' + path;
   if (!base) return p;
   return base.replace(/\/+$/, '') + p;
+}
+
+export function getAuthHeaders() {
+  try {
+    const token = localStorage.getItem(TOKEN_KEY) || '';
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
 }

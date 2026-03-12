@@ -12,6 +12,8 @@ const app = express();
 const PORT = process.env.PORT || 3333;
 const DASH_USER = process.env.DASH_USER;
 const DASH_PASS = process.env.DASH_PASS;
+const APP_TOKEN = process.env.APP_TOKEN || '';
+const HSTS_ENABLED = process.env.HSTS_ENABLED === 'true';
 
 // Allowed CORS origins: Capacitor native app + local dev. Extend via ALLOWED_ORIGINS env var.
 const ALLOWED_ORIGINS = new Set(
@@ -22,12 +24,33 @@ const ALLOWED_ORIGINS = new Set(
 );
 
 app.set('trust proxy', 1);
+app.disable('x-powered-by');
 
 // Security headers
 app.use((req, res, next) => {
   res.set('X-Content-Type-Options', 'nosniff');
   res.set('X-Frame-Options', 'DENY');
   res.set('Referrer-Policy', 'no-referrer');
+  res.set(
+    'Content-Security-Policy',
+    [
+      "default-src 'self'",
+      "base-uri 'none'",
+      "object-src 'none'",
+      "frame-ancestors 'none'",
+      "img-src 'self' data:",
+      "font-src 'self' https://fonts.gstatic.com data:",
+      "style-src 'self' https://fonts.googleapis.com",
+      "script-src 'self'",
+      "connect-src 'self' https: http:",
+    ].join('; ')
+  );
+  res.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  res.set('Cross-Origin-Opener-Policy', 'same-origin');
+  res.set('Cross-Origin-Resource-Policy', 'same-origin');
+  if (HSTS_ENABLED && (req.secure || req.get('x-forwarded-proto') === 'https')) {
+    res.set('Strict-Transport-Security', 'max-age=15552000; includeSubDomains');
+  }
   next();
 });
 
@@ -45,6 +68,35 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json({ limit: '16kb' }));
+
+const rateBuckets = new Map();
+
+function rateLimit({ windowMs, max, keyFn, message }) {
+  return (req, res, next) => {
+    const key = keyFn(req);
+    if (!key) return next();
+    const now = Date.now();
+    const bucket = rateBuckets.get(key);
+    if (!bucket || now > bucket.reset) {
+      rateBuckets.set(key, { count: 1, reset: now + windowMs });
+      res.set('X-RateLimit-Limit', String(max));
+      res.set('X-RateLimit-Remaining', String(max - 1));
+      res.set('X-RateLimit-Reset', String(Math.ceil((now + windowMs) / 1000)));
+      return next();
+    }
+    if (bucket.count >= max) {
+      res.set('X-RateLimit-Limit', String(max));
+      res.set('X-RateLimit-Remaining', '0');
+      res.set('X-RateLimit-Reset', String(Math.ceil(bucket.reset / 1000)));
+      return res.status(429).json({ error: message || 'Too many requests' });
+    }
+    bucket.count += 1;
+    res.set('X-RateLimit-Limit', String(max));
+    res.set('X-RateLimit-Remaining', String(Math.max(0, max - bucket.count)));
+    res.set('X-RateLimit-Reset', String(Math.ceil(bucket.reset / 1000)));
+    next();
+  };
+}
 
 function parseBasicAuth(req) {
   const header = req.headers.authorization || '';
@@ -135,8 +187,18 @@ function classifySource(referer) {
   return host ? 'referral' : 'direct';
 }
 
+function requireAppToken(req, res, next) {
+  if (!APP_TOKEN) return next();
+  const header = req.get('authorization') || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : req.get('x-app-token');
+  if (!token || token !== APP_TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+}
+
 app.use((req, res, next) => {
-  if (req.path.startsWith('/dashboard') || req.path.startsWith('/api/analytics')) {
+  if (req.path === '/dashboard' || req.path.startsWith('/dashboard.') || req.path.startsWith('/api/analytics')) {
     return requireDashboardAuth(req, res, next);
   }
   next();
@@ -156,10 +218,29 @@ function isValidUrl(url) {
 
 // Short code must match the same pattern enforced on the frontend
 const SHORT_CODE_RE = /^[a-zA-Z0-9_-]{1,32}$/;
+const RESERVED_CODES = new Set([
+  'api',
+  'dashboard',
+  'dashboard.css',
+  'dashboard.js',
+  'terms',
+  'terms.html',
+  'app.js',
+  'api.js',
+  'styles.css',
+  'favicon.ico',
+]);
 
 // API: create short link
-app.post('/api/links', async (req, res, next) => {
+app.post('/api/links', requireAppToken, async (req, res, next) => {
   try {
+    const limiter = rateLimit({
+      windowMs: 60_000,
+      max: 60,
+      keyFn: (r) => `create:${getClientIp(r)}`,
+      message: 'Rate limit exceeded',
+    });
+    return limiter(req, res, async () => {
     const { url, code, notes } = req.body || {};
     if (!url || typeof url !== 'string') {
       return res.status(400).json({ error: 'url is required' });
@@ -174,6 +255,12 @@ app.post('/api/links', async (req, res, next) => {
     if (code != null && !SHORT_CODE_RE.test(code)) {
       return res.status(400).json({ error: 'Invalid short code — use letters, numbers, _ or - (max 32)' });
     }
+    if (code && RESERVED_CODES.has(code.toLowerCase())) {
+      return res.status(400).json({ error: 'That short code is reserved' });
+    }
+    if (notes && String(notes).length > 512) {
+      return res.status(400).json({ error: 'Notes is too long (max 512 characters)' });
+    }
     const base = req.protocol + '://' + req.get('host');
     const shortCode = createLink(longUrl, code || null, notes || '');
     const ua = req.get('user-agent') || '';
@@ -184,6 +271,7 @@ app.post('/api/links', async (req, res, next) => {
       short_url: `${base}/${shortCode}`,
       long_url: longUrl,
     });
+    });
   } catch (e) {
     if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       return res.status(409).json({ error: 'That short code is already taken' });
@@ -193,22 +281,37 @@ app.post('/api/links', async (req, res, next) => {
 });
 
 // API: list all links
-app.get('/api/links', (req, res, next) => {
+app.get('/api/links', requireAppToken, (req, res, next) => {
   try {
+    const limiter = rateLimit({
+      windowMs: 60_000,
+      max: 60,
+      keyFn: (r) => `list:${getClientIp(r)}`,
+      message: 'Rate limit exceeded',
+    });
+    return limiter(req, res, () => {
     const links = listLinks();
     const base = req.protocol + '://' + req.get('host');
     const ua = req.get('user-agent') || '';
     const { device_type, browser, os } = parseUaDetails(ua);
     logEvent({ event_type: 'list_links', ip: getClientIp(req), user_agent: ua, device_type, browser, os });
     res.json(links.map((l) => ({ ...l, short_url: `${base}/${l.short_code}` })));
+    });
   } catch (e) {
     next(e);
   }
 });
 
 // API: update link (long_url, notes)
-app.patch('/api/links/:code', (req, res, next) => {
+app.patch('/api/links/:code', requireAppToken, (req, res, next) => {
   try {
+    const limiter = rateLimit({
+      windowMs: 60_000,
+      max: 60,
+      keyFn: (r) => `edit:${getClientIp(r)}`,
+      message: 'Rate limit exceeded',
+    });
+    return limiter(req, res, () => {
     const { long_url, notes } = req.body || {};
     if (long_url != null) {
       if (typeof long_url !== 'string' || long_url.length > 2048 || !isValidUrl(long_url)) {
@@ -221,20 +324,29 @@ app.patch('/api/links/:code', (req, res, next) => {
     const { device_type, browser, os } = parseUaDetails(ua);
     logEvent({ event_type: 'edit_link', ip: getClientIp(req), user_agent: ua, device_type, browser, os });
     res.status(200).json({ ok: true });
+    });
   } catch (e) {
     next(e);
   }
 });
 
 // API: delete link
-app.delete('/api/links/:code', (req, res, next) => {
+app.delete('/api/links/:code', requireAppToken, (req, res, next) => {
   try {
+    const limiter = rateLimit({
+      windowMs: 60_000,
+      max: 60,
+      keyFn: (r) => `del:${getClientIp(r)}`,
+      message: 'Rate limit exceeded',
+    });
+    return limiter(req, res, () => {
     const ok = deleteLink(req.params.code);
     if (!ok) return res.status(404).json({ error: 'Link not found' });
     const ua = req.get('user-agent') || '';
     const { device_type, browser, os } = parseUaDetails(ua);
     logEvent({ event_type: 'delete_link', ip: getClientIp(req), user_agent: ua, device_type, browser, os });
     res.status(204).send();
+    });
   } catch (e) {
     next(e);
   }
@@ -242,21 +354,38 @@ app.delete('/api/links/:code', (req, res, next) => {
 
 app.get('/api/analytics/summary', (req, res, next) => {
   try {
+    const limiter = rateLimit({
+      windowMs: 60_000,
+      max: 30,
+      keyFn: (r) => `analytics:${getClientIp(r)}`,
+      message: 'Rate limit exceeded',
+    });
+    return limiter(req, res, () => {
     const days = Number(req.query.days || 30);
     const summary = getAnalyticsSummary({ days });
+    res.set('Cache-Control', 'no-store');
     res.json(summary);
+    });
   } catch (e) {
     next(e);
   }
 });
 
 app.get('/dashboard', (req, res) => {
+  res.set('Cache-Control', 'no-store');
   res.sendFile(join(__dirname, 'public', 'dashboard.html'));
 });
 
 // Redirect: GET /:code (must be last so /api/* and static files are not captured)
 app.get('/:code', (req, res, next) => {
   try {
+    const limiter = rateLimit({
+      windowMs: 60_000,
+      max: 120,
+      keyFn: (r) => `redir:${getClientIp(r)}`,
+      message: 'Rate limit exceeded',
+    });
+    return limiter(req, res, () => {
     const longUrl = getByShortCode(req.params.code);
     if (!longUrl) return res.status(404).send('Link not found');
     // Guard against stored non-http URLs (belt-and-suspenders)
@@ -284,6 +413,7 @@ app.get('/:code', (req, res, next) => {
       source_type: sourceType,
     });
     res.redirect(302, longUrl);
+    });
   } catch (e) {
     next(e);
   }
