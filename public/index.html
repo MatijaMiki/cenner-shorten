@@ -6,49 +6,79 @@
   <title>Shorten</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="tree.css" />
 </head>
 <body>
-  <div class="wrap">
-    <header class="header">
-      <h1 class="title">Shorten</h1>
-      <p class="tagline">Personal link shortener</p>
+  <header class="band">
+    <div class="band-inner">
+      <div>
+        <a class="home-link" href="https://cenner.hr/"><span aria-hidden="true">←</span> Back to cenner.hr</a>
+        <h1 class="title">Shorten</h1>
+        <p class="tagline">Personal link shortener, by Cenner</p>
+      </div>
       <button type="button" class="drawer-toggle" id="drawerToggle" aria-label="View saved links" aria-expanded="false" aria-controls="listSection">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h10"/></svg>
         <span class="drawer-badge" id="drawerBadge" hidden>0</span>
       </button>
-    </header>
+    </div>
+  </header>
+  <div class="seam" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
-    <form class="form" id="form">
-      <div class="field">
-        <label for="url">URL</label>
-        <input type="url" id="url" name="url" placeholder="https://example.com/page" required autocomplete="off" />
-      </div>
-      <div class="row">
-        <div class="field optional">
-          <label for="code">Short code <span>(optional)</span></label>
-          <input
-            type="text"
-            id="code"
-            name="code"
-            placeholder="my-link"
-            autocomplete="off"
-            pattern="[a-zA-Z0-9_-]+"
-            maxlength="32"
-            title="Use only letters (A–Z), numbers (0–9), underscore (_) and hyphen (-)."
-          />
-          <div class="help" id="codeHelp">Format: letters, numbers, <code>_</code> and <code>-</code> (max 32).</div>
+  <div class="explorer">
+    <aside class="ftree-pane">
+      <nav class="ftree" aria-label="Cenner sites">
+        <p class="ftree-title">More from Cenner</p>
+        <ul>
+          <li><span class="ft-box" aria-hidden="true">−</span><a href="https://cenner.hr/" class="ft-link"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H14v2H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 13.5 3 7h12.5l-2 6.5z" fill="#f7dc80" stroke="#0b0c0e" stroke-width="1"/></svg><span>cenner.hr</span></a>
+            <ul>
+              <li><span class="ft-box" aria-hidden="true">+</span><a href="https://cenner.hr/marketplace" class="ft-link"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H15v8.5H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 6h14" stroke="#0b0c0e" stroke-width="1"/></svg><span>Marketplace</span></a></li>
+              <li><span class="ft-box" aria-hidden="true">+</span><a href="https://cenner.hr/services" class="ft-link"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H15v8.5H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 6h14" stroke="#0b0c0e" stroke-width="1"/></svg><span>Services</span></a></li>
+              <li><span class="ft-box" aria-hidden="true">+</span><a href="https://cenner.hr/blog" class="ft-link"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H15v8.5H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 6h14" stroke="#0b0c0e" stroke-width="1"/></svg><span>Blog</span></a></li>
+              <li><span class="ft-box ft-none" aria-hidden="true"></span><a href="https://cenner.hr/about" class="ft-link"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H15v8.5H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 6h14" stroke="#0b0c0e" stroke-width="1"/></svg><span>About</span></a></li>
+              <li><span class="ft-box" aria-hidden="true">−</span><a href="https://cenner.hr/services#radovi" class="ft-link"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H14v2H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 13.5 3 7h12.5l-2 6.5z" fill="#f7dc80" stroke="#0b0c0e" stroke-width="1"/></svg><span>Products</span></a>
+                <ul>
+                  <li><span class="ft-box ft-none" aria-hidden="true"></span><a href="https://links.cenner.hr/" class="ft-link"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H15v8.5H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 6h14" stroke="#0b0c0e" stroke-width="1"/></svg><span>links.cenner.hr</span></a></li>
+                  <li><span class="ft-box ft-none" aria-hidden="true"></span><a href="https://shorten.cenner.hr/" aria-current="true" class="ft-link ft-current"><svg class="ft-ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M1 3.5h5l1.5 1.5H14v2H1z" fill="#f2c94c" stroke="#0b0c0e" stroke-width="1"/><path d="M1 13.5 3 7h12.5l-2 6.5z" fill="#f7dc80" stroke="#0b0c0e" stroke-width="1"/></svg><span>shorten.cenner.hr</span></a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+    <div class="wrap">
+      <form class="form" id="form">
+        <div class="field">
+          <label for="url">URL</label>
+          <input type="url" id="url" name="url" placeholder="https://example.com/page" required autocomplete="off" />
         </div>
-        <div class="field optional">
-          <label for="notes">Notes</label>
-          <input type="text" id="notes" name="notes" placeholder="Optional note" autocomplete="off" />
+        <div class="row">
+          <div class="field optional">
+            <label for="code">Short code <span>(optional)</span></label>
+            <input
+              type="text"
+              id="code"
+              name="code"
+              placeholder="my-link"
+              autocomplete="off"
+              pattern="[a-zA-Z0-9_-]+"
+              maxlength="32"
+              title="Use only letters (A–Z), numbers (0–9), underscore (_) and hyphen (-)."
+            />
+            <div class="help" id="codeHelp">Format: letters, numbers, <code>_</code> and <code>-</code> (max 32).</div>
+          </div>
+          <div class="field optional">
+            <label for="notes">Notes</label>
+            <input type="text" id="notes" name="notes" placeholder="Optional note" autocomplete="off" />
+          </div>
         </div>
-      </div>
-      <button type="submit" class="btn" id="submit">Create short link</button>
-    </form>
+        <button type="submit" class="btn" id="submit">Create short link</button>
+      </form>
 
-    <div class="message" id="message" role="status" aria-live="polite"></div>
+      <div class="message" id="message" role="status" aria-live="polite"></div>
+    </div>
   </div>
 
   <section class="list-section" id="listSection" aria-label="Saved links">
@@ -62,9 +92,11 @@
     <p class="empty" id="empty">No links yet. Create one above.</p>
   </section>
   <footer class="footer">
-    <span>© cenner.hr 2026</span>
+    <span>© 2026 Cenner. All rights reserved.</span>
     <span class="footer-sep">•</span>
-    <a class="footer-link" href="/terms.html">Terms &amp; Conditions</a>
+    <a class="footer-link" href="/terms.html">Terms</a>
+    <span class="footer-sep">•</span>
+    <a class="footer-link" href="/privacy.html">Privacy &amp; cookies</a>
   </footer>
   <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
   <div class="modal-overlay" id="deleteModal" aria-hidden="true">

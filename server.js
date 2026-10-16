@@ -225,6 +225,8 @@ const RESERVED_CODES = new Set([
   'dashboard.js',
   'terms',
   'terms.html',
+  'privacy',
+  'privacy.html',
   'app.js',
   'api.js',
   'styles.css',

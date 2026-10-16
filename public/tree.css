@@ -1,0 +1,179 @@
+/*
+ * The Cenner family as an old file tree (folders, +/- boxes, dotted guides), linking back to
+ * cenner.hr and its other apps. Shorten's own folder is selected, the way an explorer shows
+ * where you are.
+ */
+.home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  padding: 0.4rem 0.75rem;
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.home-link:hover {
+  background: var(--ink);
+  color: var(--white);
+}
+
+/* The content area with the folders pane on its left, like an explorer window. */
+.explorer {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+}
+
+.explorer > :not(.ftree-pane) {
+  flex: 1;
+  min-width: 0;
+}
+
+.ftree-pane {
+  flex: 0 0 15.5rem;
+  background: var(--white);
+  border-right: 2px solid var(--ink);
+  overflow-y: auto;
+}
+
+.ftree {
+  position: sticky;
+  top: 0;
+  padding: 1rem 1rem 1.25rem;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+/* On a phone the folders go under the content, across the full width. */
+@media (max-width: 799px) {
+  .explorer {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .explorer > .wrap {
+    flex: none;
+    overflow: visible;
+  }
+  .ftree-pane {
+    order: 2;
+    flex: none;
+    border-right: 0;
+    border-top: 2px solid var(--ink);
+    overflow: visible;
+  }
+}
+
+.ftree-title {
+  margin: 0 0 0.6rem;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.ftree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ftree ul ul {
+  margin-left: 0.55rem;
+  padding-left: 0.95rem;
+  border-left: 1px dotted var(--slate);
+}
+
+.ftree li {
+  position: relative;
+  margin: 0.15rem 0;
+  display: block;
+}
+
+.ftree ul ul > li::before {
+  content: '';
+  position: absolute;
+  left: -0.95rem;
+  top: 0.8rem;
+  width: 0.85rem;
+  border-top: 1px dotted var(--slate);
+}
+
+.ft-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-right: 0.3rem;
+  border: 1px solid var(--slate);
+  background: var(--white);
+  font-size: 0.7rem;
+  line-height: 1;
+  vertical-align: middle;
+  position: relative;
+  z-index: 1;
+}
+
+.ft-none {
+  visibility: hidden;
+}
+
+.ft-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.1rem 0.3rem;
+  color: var(--ink);
+  text-decoration: none;
+  vertical-align: middle;
+}
+
+.ft-link:hover {
+  text-decoration: underline;
+}
+
+.ft-ico {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+}
+
+.ft-current {
+  background: var(--sky);
+  color: var(--white);
+  outline: 1px dotted var(--ink);
+  outline-offset: 1px;
+}
+
+.ft-current:hover {
+  text-decoration: none;
+}
+
+/*
+ * On a wide screen the folders pane rises to meet the blue band, and the stair fills the space
+ * beside it, so the two lock together like Tetris pieces: the stair starts at the pane's edge
+ * and steps away from it.
+ */
+@media (min-width: 800px) {
+  .seam {
+    margin-left: 15.5rem;
+  }
+  .seam i:nth-child(1) {
+    width: 100%;
+  }
+  .explorer {
+    margin-top: calc(-4 * var(--step));
+  }
+  .explorer > :not(.ftree-pane) {
+    margin-top: calc(4 * var(--step));
+  }
+  .ftree-pane {
+    position: relative;
+    z-index: 1;
+  }
+}

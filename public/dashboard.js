@@ -147,16 +147,16 @@ function renderSparkline(series, rangeDays) {
 
   const grid = document.createElementNS('http://www.w3.org/2000/svg', 'path');
   grid.setAttribute('d', `M0 ${height - 10} H${width}`);
-  grid.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+  grid.setAttribute('stroke', '#0b0c0e');
   grid.setAttribute('stroke-width', '1');
   svg.appendChild(grid);
 
   const line = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
   line.setAttribute('points', coords);
   line.setAttribute('fill', 'none');
-  line.setAttribute('stroke', '#4cc7b5');
-  line.setAttribute('stroke-width', '2');
-  line.setAttribute('stroke-linecap', 'round');
+  line.setAttribute('stroke', '#002ca5');
+  line.setAttribute('stroke-width', '3');
+  line.setAttribute('stroke-linejoin', 'round');
   svg.appendChild(line);
 
   sparklineEl.appendChild(svg);
