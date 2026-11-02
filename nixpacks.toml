@@ -1,0 +1,5 @@
+# Nixpacks starts from a pinned Ubuntu base, so a rebuild alone keeps old
+# libbrotli1, sudo and git. Upgrade them on every build.
+[phases.patch]
+dependsOn = ["setup"]
+cmds = ["apt-get update && apt-get -y --only-upgrade install libbrotli1 sudo git"]
