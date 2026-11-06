@@ -1,0 +1,9 @@
+# Keep local data, native builds and the iOS app out of the image
+node_modules
+*.db
+*.db-*
+ios
+.git
+.DS_Store
+.env
+.env.*
