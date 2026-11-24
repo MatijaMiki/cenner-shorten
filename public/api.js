@@ -62,3 +62,20 @@ export function getAuthHeaders() {
     return {};
   }
 }
+
+/**
+ * fetch with the saved access token. When the server answers 401 (no token saved here, or a
+ * wrong one), asks for the token once, saves it in this browser and tries again.
+ */
+export async function authFetch(url, opts = {}) {
+  const run = () => fetch(url, { ...opts, headers: { ...(opts.headers || {}), ...getAuthHeaders() } });
+  let r = await run();
+  if (r.status === 401 && typeof window !== 'undefined' && typeof window.prompt === 'function') {
+    const token = window.prompt('Access token for this link shortener:');
+    if (token && token.trim()) {
+      try { localStorage.setItem(TOKEN_KEY, token.trim()); } catch { /* private mode: asked again next time */ }
+      r = await run();
+    }
+  }
+  return r;
+}

@@ -188,10 +188,11 @@ function classifySource(referer) {
 }
 
 function requireAppToken(req, res, next) {
-  if (!APP_TOKEN) return next();
+  // No token configured means closed, not open: the link API must never answer without one.
+  if (!APP_TOKEN) return res.status(503).json({ error: 'Link API not configured' });
   const header = req.get('authorization') || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : req.get('x-app-token');
-  if (!token || token !== APP_TOKEN) {
+  if (!token || !safeEqual(String(token), APP_TOKEN)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   next();
