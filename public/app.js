@@ -1,4 +1,4 @@
-import { initApiBase, apiUrl, getApiBase, getAuthHeaders } from './api.js';
+import { initApiBase, apiUrl, getApiBase, getAuthHeaders, authFetch } from './api.js';
 
 const form = document.getElementById('form');
 const listEl = document.getElementById('list');
@@ -145,7 +145,7 @@ function renderList(links) {
       const confirmed = await showDeleteConfirm(code);
       if (!confirmed) return;
       try {
-        const r = await fetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), {
+        const r = await authFetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), {
           method: 'DELETE',
           headers: getAuthHeaders(),
         });
@@ -201,7 +201,7 @@ if (codeInput) {
 
 async function loadList() {
   try {
-    const r = await fetch(apiUrl('/api/links'), { headers: getAuthHeaders() });
+    const r = await authFetch(apiUrl('/api/links'), { headers: getAuthHeaders() });
     if (!r.ok) throw new Error('Failed to load');
     const links = await r.json();
     renderList(links);
@@ -220,7 +220,7 @@ form.addEventListener('submit', async (e) => {
   submitBtn.disabled = true;
   messageEl.textContent = '';
   try {
-    const r = await fetch(apiUrl('/api/links'), {
+    const r = await authFetch(apiUrl('/api/links'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ url, code, notes }),
@@ -265,7 +265,7 @@ editForm.addEventListener('submit', async (e) => {
   const notes = editNotes.value.trim();
   const longUrl = url.startsWith('http') ? url : 'https://' + url;
   try {
-    const r = await fetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), {
+    const r = await authFetch(apiUrl(`/api/links/${encodeURIComponent(code)}`), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
       body: JSON.stringify({ long_url: longUrl, notes }),
